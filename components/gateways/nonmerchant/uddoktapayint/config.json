@@ -1,0 +1,15 @@
+{
+	"version": "1.0.0",
+	"name": "UddoktaPayInt.name",
+	"description": "UddoktaPayInt.description",
+	"authors": [
+		{
+			"name": "UddoktaPay Team",
+			"url": "https://uddoktapay.com"
+		}
+	],
+	"currencies": [
+		"USD","BDT"
+	],
+	"signup_url": "https://uddoktapay.com"
+}
