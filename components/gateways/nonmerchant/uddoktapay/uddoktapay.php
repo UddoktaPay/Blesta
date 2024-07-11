@@ -44,14 +44,14 @@ class Uddoktapay extends NonmerchantGateway
     public function editSettings(array $meta)
     {
         $rules = [
-            'api_key' => [
+            'api_key'       => [
                 'valid' => [
                     'rule'    => 'isEmpty',
                     'negate'  => true,
                     'message' => Language::_('UddoktaPay.!error.api_key.valid', true),
                 ],
             ],
-            'api_url' => [
+            'api_url'       => [
                 'valid' => [
                     'rule'    => 'isEmpty',
                     'negate'  => true,
@@ -87,12 +87,16 @@ class Uddoktapay extends NonmerchantGateway
     {
         Loader::loadModels($this, ['Companies']);
 
-        $amount = round($amount, 2);
+        $formatAmount = round($amount, 2);
         if (isset($options['recur']['amount'])) {
             $options['recur']['amount'] = round($options['recur']['amount'], 2);
         }
 
         $currency = ($this->currency ?? null);
+
+        if (strtoupper($currency) !== 'BDT') {
+            $formatAmount *= $this->meta['exchange_rate'];
+        }
 
         if (isset($invoice_amounts) && is_array($invoice_amounts)) {
             $invoices = $this->serializeInvoices($invoice_amounts);
@@ -105,11 +109,12 @@ class Uddoktapay extends NonmerchantGateway
         $payment = [
             'full_name'    => ($contact_info['first_name'] ?? '') . ' ' . ($contact_info['last_name'] ?? ''),
             'email'        => $this->emailFromClientId($contact_info['client_id']),
-            'amount'       => $amount,
+            'amount'       => $formatAmount,
             'metadata'     => [
                 'customer_id' => ($contact_info['client_id'] ?? null),
                 'invoices'    => $invoices,
                 'currency'    => $currency,
+                'amount'      => $amount,
             ],
             'redirect_url' => $notification_url,
             'return_type'  => 'GET',
@@ -177,7 +182,7 @@ class Uddoktapay extends NonmerchantGateway
 
         return [
             'client_id'             => ($response['metadata']['customer_id'] ?? null),
-            'amount'                => $response['amount'],
+            'amount'                => $response['metadata']['amount'],
             'currency'              => $response['metadata']['currency'],
             'invoices'              => $this->unserializeInvoices($response['metadata']['invoices'] ?? null),
             'status'                => $status,
@@ -220,7 +225,7 @@ class Uddoktapay extends NonmerchantGateway
 
         return [
             'client_id'             => ($response['metadata']['customer_id'] ?? null),
-            'amount'                => $response['amount'],
+            'amount'                => $response['metadata']['amount'],
             'currency'              => $response['metadata']['currency'],
             'invoices'              => $this->unserializeInvoices($response['metadata']['invoices'] ?? null),
             'status'                => $status,
