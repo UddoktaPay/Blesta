@@ -46,18 +46,25 @@ class Uddoktapay extends NonmerchantGateway
         $rules = [
             'api_key' => [
                 'valid' => [
-                    'rule' => 'isEmpty',
-                    'negate' => true,
-                    'message' => Language::_('UddoktaPay.!error.api_key.valid', true)
-                ]
+                    'rule'    => 'isEmpty',
+                    'negate'  => true,
+                    'message' => Language::_('UddoktaPay.!error.api_key.valid', true),
+                ],
             ],
             'api_url' => [
                 'valid' => [
-                    'rule' => 'isEmpty',
-                    'negate' => true,
-                    'message' => Language::_('UddoktaPay.!error.api_url.valid', true)
-                ]
-            ]
+                    'rule'    => 'isEmpty',
+                    'negate'  => true,
+                    'message' => Language::_('UddoktaPay.!error.api_url.valid', true),
+                ],
+            ],
+            'exchange_rate' => [
+                'valid' => [
+                    'rule'    => 'isEmpty',
+                    'negate'  => true,
+                    'message' => Language::_('UddoktaPay.!error.exchange_rate.valid', true),
+                ],
+            ],
         ];
         $this->Input->setRules($rules);
 
@@ -76,7 +83,6 @@ class Uddoktapay extends NonmerchantGateway
         $this->currency = $currency;
     }
 
-
     public function buildProcess(array $contact_info, $amount, array $invoice_amounts = null, array $options = null)
     {
         Loader::loadModels($this, ['Companies']);
@@ -93,24 +99,23 @@ class Uddoktapay extends NonmerchantGateway
         }
 
         $notification_url = Configure::get('Blesta.gw_callback_url')
-            . Configure::get('Blesta.company_id') . '/uddoktapay/?client_id='
+        . Configure::get('Blesta.company_id') . '/uddoktapay/?client_id='
             . (isset($contact_info['client_id']) ? $contact_info['client_id'] : null);
 
         $payment = [
-            'full_name' => ($contact_info['first_name'] ?? '') . ' ' . ($contact_info['last_name'] ?? ''),
-            'email' => $this->emailFromClientId($contact_info['client_id']),
-            'amount' => $amount,
-            'metadata' => [
+            'full_name'    => ($contact_info['first_name'] ?? '') . ' ' . ($contact_info['last_name'] ?? ''),
+            'email'        => $this->emailFromClientId($contact_info['client_id']),
+            'amount'       => $amount,
+            'metadata'     => [
                 'customer_id' => ($contact_info['client_id'] ?? null),
-                'invoices' => $invoices,
-                'currency'  => $currency
+                'invoices'    => $invoices,
+                'currency'    => $currency,
             ],
             'redirect_url' => $notification_url,
-            'return_type'   => 'GET',
-            'cancel_url' => ($options['return_url'] ?? null),
-            'webhook_url' => $notification_url,
+            'return_type'  => 'GET',
+            'cancel_url'   => ($options['return_url'] ?? null),
+            'webhook_url'  => $notification_url,
         ];
-
 
         try {
             $api = $this->getApi();
@@ -171,14 +176,14 @@ class Uddoktapay extends NonmerchantGateway
         }
 
         return [
-            'client_id' => ($response['metadata']['customer_id'] ?? null),
-            'amount' => $response['amount'],
-            'currency' => $response['metadata']['currency'],
-            'invoices' => $this->unserializeInvoices($response['metadata']['invoices'] ?? null),
-            'status' => $status,
-            'reference_id' => null,
-            'transaction_id' => $response['transaction_id'],
-            'parent_transaction_id' => null
+            'client_id'             => ($response['metadata']['customer_id'] ?? null),
+            'amount'                => $response['amount'],
+            'currency'              => $response['metadata']['currency'],
+            'invoices'              => $this->unserializeInvoices($response['metadata']['invoices'] ?? null),
+            'status'                => $status,
+            'reference_id'          => null,
+            'transaction_id'        => $response['transaction_id'],
+            'parent_transaction_id' => null,
         ];
     }
 
@@ -214,13 +219,13 @@ class Uddoktapay extends NonmerchantGateway
         }
 
         return [
-            'client_id' => ($response['metadata']['customer_id'] ?? null),
-            'amount' => $response['amount'],
-            'currency' => $response['metadata']['currency'],
-            'invoices' => $this->unserializeInvoices($response['metadata']['invoices'] ?? null),
-            'status' => $status,
-            'transaction_id' => $response['transaction_id'],
-            'parent_transaction_id' => null
+            'client_id'             => ($response['metadata']['customer_id'] ?? null),
+            'amount'                => $response['amount'],
+            'currency'              => $response['metadata']['currency'],
+            'invoices'              => $this->unserializeInvoices($response['metadata']['invoices'] ?? null),
+            'status'                => $status,
+            'transaction_id'        => $response['transaction_id'],
+            'parent_transaction_id' => null,
         ];
     }
 
