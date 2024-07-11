@@ -87,16 +87,16 @@ class Uddoktapayint extends NonmerchantGateway
     {
         Loader::loadModels($this, ['Companies']);
 
-        $amount = round($amount, 2);
-        
+        $formatAmount = round($amount, 2);
+
         if (isset($options['recur']['amount'])) {
             $options['recur']['amount'] = round($options['recur']['amount'], 2);
         }
 
         $currency = ($this->currency ?? null);
 
-        if (strtoupper($currency) === 'BDT') {
-            $amount /= $this->meta['exchange_rate'];
+        if (strtoupper($currency) !== 'USD') {
+            $formatAmount /= $this->meta['exchange_rate'];
         }
 
         if (isset($invoice_amounts) && is_array($invoice_amounts)) {
@@ -110,11 +110,12 @@ class Uddoktapayint extends NonmerchantGateway
         $payment = [
             'full_name'    => ($contact_info['first_name'] ?? '') . ' ' . ($contact_info['last_name'] ?? ''),
             'email'        => $this->emailFromClientId($contact_info['client_id']),
-            'amount'       => $amount,
+            'amount'       => $formatAmount,
             'metadata'     => [
                 'customer_id' => ($contact_info['client_id'] ?? null),
                 'invoices'    => $invoices,
                 'currency'    => $currency,
+                'amount'      => $amount,
             ],
             'redirect_url' => $notification_url,
             'return_type'  => 'GET',
@@ -182,7 +183,7 @@ class Uddoktapayint extends NonmerchantGateway
 
         return [
             'client_id'             => ($response['metadata']['customer_id'] ?? null),
-            'amount'                => $response['amount'],
+            'amount'                => $response['metadata']['amount'],
             'currency'              => $response['metadata']['currency'],
             'invoices'              => $this->unserializeInvoices($response['metadata']['invoices'] ?? null),
             'status'                => $status,
@@ -225,7 +226,7 @@ class Uddoktapayint extends NonmerchantGateway
 
         return [
             'client_id'             => ($response['metadata']['customer_id'] ?? null),
-            'amount'                => $response['amount'],
+            'amount'                => $response['metadata']['amount'],
             'currency'              => $response['metadata']['currency'],
             'invoices'              => $this->unserializeInvoices($response['metadata']['invoices'] ?? null),
             'status'                => $status,
