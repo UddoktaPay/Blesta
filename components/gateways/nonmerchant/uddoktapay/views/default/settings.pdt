@@ -11,4 +11,10 @@
         $this->Form->fieldText('api_url', ($meta['api_url'] ?? null), ['id' => 'api_url', 'class' => 'block']);
         ?>
     </li>
+    <li>
+        <?php
+        $this->Form->label($this->_('UddoktaPay.meta.exchange_rate', true), 'exchange_rate');
+        $this->Form->fieldText('exchange_rate', ($meta['exchange_rate'] ?? null), ['id' => 'exchange_rate', 'class' => 'block']);
+        ?>
+    </li>
 </ul>

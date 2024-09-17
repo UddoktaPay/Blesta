@@ -15,3 +15,4 @@ $lang['UddoktaPay.!error.exchange_rate.valid'] = 'Exchange Rate invalid.';
 // Settings
 $lang['UddoktaPay.meta.api_key'] = 'API Key';
 $lang['UddoktaPay.meta.api_url'] = 'API URL';
+$lang['UddoktaPay.meta.exchange_rate'] = 'Exchange Rate';
