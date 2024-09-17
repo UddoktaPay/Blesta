@@ -6,7 +6,7 @@ The UddoktaPay Checkout module allows you to effortlessly integrate payment solu
 
 To install the UddoktaPay Checkout module, follow these steps:
 
-1. Download [UddoktaPay.zip](https://github.com/UddoktaPay/Blesta/releases/download/1.0.2/UddoktaPay.zip) file from the **Release** section of this repository.
+1. Download [UddoktaPay.zip](https://github.com/UddoktaPay/Blesta/releases/download/1.0.3/UddoktaPay.zip) file from the **Release** section of this repository.
 
 2. Upload the `UddoktaPay.zip` file to your Blesta installation.
 
